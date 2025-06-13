@@ -1,0 +1,68 @@
+version: 2
+
+macros:
+  - name: pmt
+    description: >-
+      Replicates Excel's **PMT** function in Snowflake, calculating the periodic payment for a loan based on a constant interest rate, number of periods, and present value. It returns the fixed payment per period (including both principal and interest), matching Excel’s sign convention (a payment outflow is negative) [oai_citation:3‡support.microsoft.com](https://support.microsoft.com/en-us/office/cumipmt-function-61067bb0-9016-427d-b95b-1a752af0e606#:~:text=%3DCUMIPMT%28A2%2F12%2CA3). The macro handles zero or null interest rates and uses end-of-period payments by default (type=0) or beginning-of-period if specified (type=1).
+
+    arguments:
+      - name: rate
+        type: float
+        description: "The interest rate per period (e.g. monthly interest rate as a decimal). Can be 0 or NULL (treated as 0 interest)."
+      - name: nper
+        type: integer
+        description: "Total number of payment periods (e.g. total months of the loan). Must be a positive integer."
+      - name: pv
+        type: float
+        description: "Present value of the loan (principal amount at time 0). Typically positive for a loan (cash received), yielding a negative payment (cash outflow)."
+      - name: type
+        type: integer
+        description: "When payments are due: 0 for end-of-period (ordinary annuity), 1 for beginning-of-period (annuity due). Default is 0. If an invalid value is provided, the macro returns NULL."
+
+  - name: cumipmt
+    description: >-
+      Replicates Excel's **CUMIPMT** function, returning the cumulative interest paid on a loan between two payment periods. It sums the interest portion of payments from `start_period` to `end_period` inclusive [oai_citation:4‡support.microsoft.com](https://support.microsoft.com/en-us/office/cumipmt-function-61067bb0-9016-427d-b95b-1a752af0e606#:~:text=%3DCUMIPMT%28A2%2F12%2CA3). The macro produces a negative number for interest paid (consistent with Excel, since interest payments are cash outflows). It validates that the period range is within 1 to `nper` and that `start_period` is not greater than `end_period` [oai_citation:5‡support.microsoft.com](https://support.microsoft.com/en-us/office/cumipmt-function-61067bb0-9016-427d-b95b-1a752af0e606#:~:text=,NUM%21%20error%20value). This macro handles 0 or NULL interest gracefully (returning 0 interest paid in that range).
+
+    arguments:
+      - name: rate
+        type: float
+        description: "The interest rate per period (e.g. monthly rate as decimal). If 0 or NULL, no interest is accrued."
+      - name: nper
+        type: integer
+        description: "Total number of payment periods for the loan. Must be positive. (If `end_period` exceeds this or equals 0, result will be NULL.)"
+      - name: pv
+        type: float
+        description: "Present value (principal) of the loan at period 0. Typically a positive number for a loan."
+      - name: start_period
+        type: integer
+        description: "The first period in the range for which to calculate interest (1-indexed). Must be >= 1."
+      - name: end_period
+        type: integer
+        description: "The last period in the range for interest calculation (inclusive). Must be >= start_period and <= nper."
+      - name: type
+        type: integer
+        description: "Payment timing: 0 for payments at period end, 1 for payments at period beginning. Default 0. If not 0 or 1, the macro returns NULL."
+
+  - name: cumprinc
+    description: >-
+      Replicates Excel's **CUMPRINC** function, which returns the cumulative principal paid on a loan between two periods. It calculates how much principal has been repaid from `start_period` through `end_period` [oai_citation:8‡support.microsoft.com](https://support.microsoft.com/en-us/office/cumprinc-function-94a4516d-bd65-41a1-bc16-053a6af4c04d#:~:text=%3DCUMPRINC%28A2%2F12%2CA3). The result is negative for cash outflow (principal repayments) and positive if the principal would increase (not typical for loans, usually result is negative) [oai_citation:9‡support.microsoft.com](https://support.microsoft.com/en-us/office/cumprinc-function-94a4516d-bd65-41a1-bc16-053a6af4c04d#:~:text=). The macro checks that the periods range is valid (1 ≤ start ≤ end ≤ nper) and handles zero-interest scenarios (where principal paid is just evenly distributed payments).
+
+    arguments:
+      - name: rate
+        type: float
+        description: "Interest rate per period. If 0 or NULL, interest is zero and principal paid equals total payment."
+      - name: nper
+        type: integer
+        description: "Total number of periods in the loan. Must be positive."
+      - name: pv
+        type: float
+        description: "Present value (initial principal) of the loan. Positive for a loan (to be paid back)."
+      - name: start_period
+        type: integer
+        description: "Starting period for calculation (>= 1)."
+      - name: end_period
+        type: integer
+        description: "Ending period for calculation (>= start_period and ≤ nper)."
+      - name: type
+        type: integer
+        description: "Payment timing: 0 = payments at end of period, 1 = payments at beginning. Default 0. If invalid, returns NULL."
