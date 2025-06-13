@@ -4,64 +4,64 @@ unit_tests:
   - name: test_excel_financial_functions_pmt
     model: test_excel_financial_functions
     given:
-      - input: ref('seed_test_excel_functions')
+      - input: ref('seed_test_excel_financial_functions')
           
     expect:
       rows:
         - {
-            pmt: -221.60,
-            cumipmt: -10318.40,
-            cumprinc: -5000.00,
-          }
-        - {
             pmt: -100.00,
-            cumipmt: -2400.00,
-            cumprinc: -1200.00,
+            cumipmt: null,
+            cumprinc: null,
           }
         - {
             pmt: -297.47,
-            cumipmt: -297.47,
-            cumprinc: 0.00,
-          }
-        - {
-            pmt: -393.73,
-            cumipmt: -43623.80,
-            cumprinc: -20000.00,
+            cumipmt: -20.42,
+            cumprinc: -277.05,
           }
         - {
             pmt: -532.94,
-            cumipmt: -21488.20,
-            cumprinc: 702.00,
+            cumipmt: -489.75,
+            cumprinc: -5372.62,
+          }
+        - {
+            pmt: -221.60,
+            cumipmt: -318.47,
+            cumprinc: -5000.00,
+          }
+        - {
+            pmt: -393.72,
+            cumipmt: -3623.42,
+            cumprinc: -20000.00,
           }
       
 models:
   - name: test_excel_financial_functions
     columns:
       - name: rate
-        data_type: number(12,11)
+        data_type: float64
         data_tests:
           - not_null
       - name: nper
-        data_type: number
+        data_type: int64
         data_tests:
           - not_null
       - name: pv
-        data_type: number(38,2)
+        data_type: float64
         data_tests:
           - not_null
       - name: type
-        data_type: number
+        data_type: int64
         data_tests:
           - not_null
       - name: pmt
-        data_type: number(38,2)
+        data_type: float64
         data_tests:
           - not_null
       - name: cumipmt
-        data_type: number(38,2)
+        data_type: float64
         data_tests:
           - not_null
-      - name: cumpric
-        data_type: number(38,2)
+      - name: cumprinc
+        data_type: float64
         data_tests:
           - not_null                    

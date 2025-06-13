@@ -1,0 +1,56 @@
+[sqlfluff]
+templater = dbt
+dialect = bigquery
+
+[sqlfluff:templater:dbt]
+project_dir = .
+profiles_dir = ~/.dbt
+profile = default
+
+[sqlfluff:rules]
+trailing_comma = True
+
+# Capitalization rules
+capitalisation_policy = lower
+extended_capitalisation_policy = lower
+
+[sqlfluff:rules:capitalisation.keywords]
+capitalisation_policy = lower
+
+[sqlfluff:rules:capitalisation.identifiers]
+capitalisation_policy = lower
+
+[sqlfluff:rules:capitalisation.functions]
+capitalisation_policy = lower
+
+[sqlfluff:rules:capitalisation.literals]
+capitalisation_policy = lower
+
+# Layout rules for SELECT clauses
+[sqlfluff:rules:layout.select_targets]
+wildcard_policy = single
+
+[sqlfluff:layout:type:select_clause]
+# Single column selects on one line
+line_position = alone:strict
+
+[sqlfluff:layout:type:select_clause_element]
+# Multiple columns on separate lines
+line_position = alone
+
+# Indentation
+[sqlfluff:indentation]
+indent_unit = space
+tab_space_size = 4
+indented_joins = false
+indented_ctes = true
+indented_using_on = true
+
+# Line length
+[sqlfluff:rules:layout.long_lines]
+ignore_comment_lines = true
+ignore_comment_clauses = true
+line_length = 160
+
+[sqlfluff:rules:ambiguous.column_references]
+group_by_and_order_by_style = explicit

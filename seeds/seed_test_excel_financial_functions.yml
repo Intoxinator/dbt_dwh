@@ -1,24 +1,24 @@
 version: 2
 
 seeds:
-  - name: seed_excel_financial_functions
+  - name: seed_test_excel_financial_functions
     description: Seed data used to validate the excel financial function macros against known values (mirroring Excel behavior).
     columns:
       - name: rate
+        data_type: float64
         description: Interest rate per period (monthly), decimal format.
       - name: nper
+        data_type: int64
         description: Total number of periods.
       - name: pv
+        data_type: float64
         description: Present value of the loan (initial principal).
       - name: start_period
+        data_type: int64
         description: Start of the cumulative calculation window (1-indexed).
       - name: end_period
+        data_type: int64
         description: End of the cumulative calculation window (1-indexed).
       - name: type
+        data_type: int64
         description: Payment type (0=end of period, 1=beginning).
-      - name: pmt
-        description: Expected periodic payment (as calculated by Excel).
-      - name: cumipmt
-        description: Expected cumulative interest over period range (as calculated by Excel).
-      - name: cumprinc
-        description: Expected cumulative principal over period range (as calculated by Excel).
